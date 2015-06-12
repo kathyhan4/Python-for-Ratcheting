@@ -23,11 +23,11 @@ from pylab import *
 import bisect
 
 # Material Properties Constants
-Ef = 333000. # Young's modulus of elastic film in MPa
-nu_f = 0.3 #Poisson's ratio of elastic film
-sigma0 = -0.014*Ef # Initial in plane bilateral stress in MPa, this is a guess
+Ef = 70000. # Young's modulus of elastic film in MPa
+nu_f = 0.35 #Poisson's ratio of elastic film
+sigma0 = -100 # Initial in plane bilateral stress in MPa, this is a guess
 Em = 200000. #Young's modulus of the metal in MPa
-nu_m = 0.25 # Poisson's ratio of the metal
+nu_m = 0.45 # Poisson's ratio of the metal
 #alpha_m = 24e-6 # thermal coefficient of expansion of metal
 #alpha_s = 2.8e-6 # thermal coefficient of expansion of substrate, Si
 alpha_m = 24e-6 # thermal coefficient of expansion of metal
@@ -35,10 +35,11 @@ alpha_s = 14e-6 # thermal coefficient of expansion of substrate, (would be Si, b
 TH = 90.0 # temperature in C of max cycle temp
 TL = -10.0 # temperature in C of min cycle temp
 Y = 100.0 # uniaxial yield strength of metal in MPa
+mu_R = 0.01 #MPa spring contstant, real portion of viscosity (assume constant with T even though that's not true)
 
 # Simulation Constants
-h = 1 # film thickness in mm
-PointsPerCycle = 20 #number of timepoints per cycle, higher number is slower, but should have more stable results
+h = .00004 # film thickness in mm
+PointsPerCycle = 10 #number of timepoints per cycle, higher number is slower, but should have more stable results
 NumberCycles = 10 # arbitrarily chose number of cycles, can graph any of these later
 dT = 1/float(PointsPerCycle) #timestep in units of cycles
 H0 = 10 * h #initial thickness of metal in mm
@@ -153,29 +154,27 @@ for j in range(1,Points):
 #    H[xSteps-2,j] = H0
 
     for i in range(1,xSteps-1): 
-        w[i,j] = w[i,j-1] + dT/eta_R*(((H[i,j-1])**3/3*(p[i+1,j-1]-2*p[i,j-1]+p[i-1,j-1])/\
-        (deltax**2)+((H[i,j-1])**2*(H[i+1,j-1]-H[i-1,j-1])/2/deltax * \
-        ((p[i+1,j-1]-p[i-1,j-1])/2/deltax)))-(((H[i+1,j-1]-H[i-1,j-1])/2/deltax)*H[i,j-1]*\
-        taox[i,j-1]+(H[i,j-1])**2/2*(taox[i+1,j-1]-taox[i-1,j-1])/2/deltax))        
+#        w[i,j] = w[i,j-1] + dT/eta_R*(((H[i,j-1])**3/3*(p[i+1,j-1]-2*p[i,j-1]+p[i-1,j-1])/\
+#        (deltax**2)+((H[i,j-1])**2*(H[i+1,j-1]-H[i-1,j-1])/2/deltax * \
+#        ((p[i+1,j-1]-p[i-1,j-1])/2/deltax)))-(((H[i+1,j-1]-H[i-1,j-1])/2/deltax)*H[i,j-1]*\
+#        taox[i,j-1]+(H[i,j-1])**2/2*(taox[i+1,j-1]-taox[i-1,j-1])/2/deltax))        
+        w[i,j] = w[i,j-1] + dT/eta_R*((1-2*nu_m)/2/(1-nu_m)*H[i,j-1]/eta_R*h**3/12*(-p[i,j-1])-(mu_R/eta_R*w[i,j-1]))        
        
         H[i,j] = H0+w[i,j]
         
-    w[0,j] = w[0,j-1] + dT/eta_R*(((H[0,j-1])**3/3*(p[1,j-1]-2*p[0,j-1]+p[xSteps-1,j-1])/\
-    (deltax**2)+((H[0,j-1])**2*(H[1,j-1]-H[xSteps-1,j-1])/2/deltax * \
-    ((p[1,j-1]-p[xSteps-1,j-1])/2/deltax)))-(((H[1,j-1]-H[xSteps-1,j-1])/2/deltax)*H[0,j-1]*\
-    taox[0,j-1]+(H[0,j-1])**2/2*(taox[1,j-1]-taox[xSteps-1,j-1])/2/deltax))
+#    w[0,j] = w[0,j-1] + dT/eta_R*(((H[0,j-1])**3/3*(p[1,j-1]-2*p[0,j-1]+p[xSteps-1,j-1])/\
+#    (deltax**2)+((H[0,j-1])**2*(H[1,j-1]-H[xSteps-1,j-1])/2/deltax * \
+#    ((p[1,j-1]-p[xSteps-1,j-1])/2/deltax)))-(((H[1,j-1]-H[xSteps-1,j-1])/2/deltax)*H[0,j-1]*\
+#    taox[0,j-1]+(H[0,j-1])**2/2*(taox[1,j-1]-taox[xSteps-1,j-1])/2/deltax))
+    w[0,j] = w[0,j-1] + dT/eta_R*((1-2*nu_m)/2/(1-nu_m)*H[0,j-1]/eta_R*h**3/12*(-p[0,j-1])-(mu_R/eta_R*w[0,j-1]))
     
-    w[xSteps-1,j] = w[xSteps-1,j-1] + dT/eta_R*(((H[xSteps-1,j-1])**3/3*(p[0,j-1]-2*p[xSteps-1,j-1]+p[xSteps-2,j-1])/\
-    (deltax**2)+((H[xSteps-1,j-1])**2*(H[0,j-1]-H[xSteps-2,j-1])/2/deltax * \
-    ((p[0,j-1]-p[xSteps-2,j-1])/2/deltax)))-(((H[0,j-1]-H[xSteps-2,j-1])/2/deltax)*H[xSteps-1,j-1]*\
-    taox[xSteps-1,j-1]+(H[xSteps-1,j-1])**2/2*(taox[0,j-1]-taox[xSteps-2,j-1])/2/deltax))     
+    w[xSteps-1,j] = w[xSteps-1,j-1] + dT/eta_R*((1-2*nu_m)/2/(1-nu_m)*H[xSteps-1,j-1]/eta_R*h**3/12*(-p[xSteps-1,j-1])-(mu_R/eta_R*w[xSteps-1,j-1]))     
     
     for i in range(1,xSteps-1): 
-        ux[i,j] = dT/eta_R*(taox[i,j-1]*H[i,j-1]-(H[i,j-1])**2/2*(p[i+1,j-1]-p[i-1,j-1])/2/deltax)+ux[i,j-1]
+        ux[i,j] = dT/eta_R*(H[i,j-1]*taox[i,j-1]-mu_R*ux[i,j-1])+ux[i,j-1]
         
-    ux[0,j] = dT/eta_R*(taox[0,j-1]*H[0,j-1]-(H[0,j-1])**2/2*(p[1,j-1]-p[xSteps-1,j-1])/2/deltax)+ux[0,j-1]
-    ux[xSteps-1,j] = dT/eta_R*(taox[xSteps-1,j-1]*H[xSteps-1,j-1]-(H[xSteps-1,j-1])**2/2*(p[0,j-1]-p[xSteps-2,j-1])/2/deltax)+ux[xSteps-1,j-1]
-
+    ux[0,j] = dT/eta_R*(H[0,j-1]*taox[0,j-1]-mu_R*ux[0,j-1])+ux[0,j-1]
+    ux[xSteps-1,j] = dT/eta_R*(H[xSteps-1,j-1]*taox[xSteps-1,j-1]-mu_R*ux[xSteps-1,j-1])+ux[xSteps-1,j-1]
 #        ux[2,j]=0
 #        ux[xSteps-3,j]=0
                 
