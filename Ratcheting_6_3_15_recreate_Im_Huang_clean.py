@@ -39,13 +39,13 @@ TL = -10.0 # temperature in C of min cycle temp
 Y = 100.0 # uniaxial yield strength of metal in MPa
 
 # Simulation Constants
-h = float(.005) # film thickness in microns
+h = float(.1) # film thickness in microns
 PointsPerCycle = 10 #number of timepoints per cycle, higher number is slower, but should have more stable results
 NumberCycles = 200 # arbitrarily chose number of cycles, can graph any of these later
 dT = 1/float(PointsPerCycle) #timestep in units of cycles
 H0 = 10 * h #initial thickness of metal in units of h
 xSteps = 201
-SimulationWidth = 800 * h # will simulate a 200 um wide 
+SimulationWidth = 600 * h # will simulate a 200 um wide 
 #deltax = SimulationWidth / (xSteps-1) #mesh size in x direction in mm
 deltax = (SimulationWidth / (xSteps-1))
 S = float64(0) * Ef # try for S=0, S=0.1, and S=10 for elastic constraint values
