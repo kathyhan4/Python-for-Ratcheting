@@ -23,11 +23,11 @@ from pylab import *
 import bisect
 
 # Material Properties Constants
-Ef = 70000. # Young's modulus of elastic film in MPa
-nu_f = 0.35 #Poisson's ratio of elastic film
-sigma0 = -100 # Initial in plane bilateral stress in MPa, this is a guess
+Ef = 333000. # Young's modulus of elastic film in MPa
+nu_f = 0.3 #Poisson's ratio of elastic film
+sigma0 = -0.014*Ef # Initial in plane bilateral stress in MPa, this is a guess
 Em = 200000. #Young's modulus of the metal in MPa
-nu_m = 0.45 # Poisson's ratio of the metal
+nu_m = 0.25 # Poisson's ratio of the metal
 #alpha_m = 24e-6 # thermal coefficient of expansion of metal
 #alpha_s = 2.8e-6 # thermal coefficient of expansion of substrate, Si
 alpha_m = 24e-6 # thermal coefficient of expansion of metal
@@ -35,18 +35,17 @@ alpha_s = 14e-6 # thermal coefficient of expansion of substrate, (would be Si, b
 TH = 90.0 # temperature in C of max cycle temp
 TL = -10.0 # temperature in C of min cycle temp
 Y = 100.0 # uniaxial yield strength of metal in MPa
-mu_R = 0.01 #MPa spring contstant, real portion of viscosity (assume constant with T even though that's not true)
 
 # Simulation Constants
-h = .00004 # film thickness in mm
-PointsPerCycle = 10 #number of timepoints per cycle, higher number is slower, but should have more stable results
+h = float(1) # film thickness in microns
+PointsPerCycle = 1 #number of timepoints per cycle, higher number is slower, but should have more stable results
 NumberCycles = 10 # arbitrarily chose number of cycles, can graph any of these later
 dT = 1/float(PointsPerCycle) #timestep in units of cycles
-H0 = 10 * h #initial thickness of metal in mm
-xSteps = 200
-SimulationWidth = 200 * h # will simulate a 200 um wide domain when set to 0.2 mm
+H0 = 10 * h #initial thickness of metal in units of h
+xSteps = 201
+SimulationWidth = 200 * h # will simulate a 200 um wide 
 #deltax = SimulationWidth / (xSteps-1) #mesh size in x direction in mm
-deltax = h
+deltax = (SimulationWidth / (xSteps-1))
 S = float64(0) * Ef # try for S=0, S=0.1, and S=10 for elastic constraint values
 Points = int(PointsPerCycle*NumberCycles)
 
