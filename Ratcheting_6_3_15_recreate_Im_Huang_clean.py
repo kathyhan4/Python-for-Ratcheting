@@ -39,9 +39,9 @@ TL = -10.0 # temperature in C of min cycle temp
 Y = 100.0 # uniaxial yield strength of metal in MPa
 
 # Simulation Constants
-h = float(.1) # film thickness in microns
+h = float(1) # film thickness in microns
 PointsPerCycle = 10 #number of timepoints per cycle, higher number is slower, but should have more stable results
-NumberCycles = 200 # arbitrarily chose number of cycles, can graph any of these later
+NumberCycles = 500 # arbitrarily chose number of cycles, can graph any of these later
 dT = 1/float(PointsPerCycle) #timestep in units of cycles
 H0 = 10 * h #initial thickness of metal in units of h
 xSteps = 201
