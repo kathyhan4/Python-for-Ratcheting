@@ -23,13 +23,12 @@ from pylab import *
 import bisect
 
 
-nu_f_values = [0.3]
-SimulationWidth_values = [200]
-PointsPerCycle_values = [5, 10, 20, 50, 100, 200, 500, 1000]
-output = numpy.zeros((len(nu_f_values),len(PointsPerCycle_values)))
+nu_f_values = [.1,.15,.2,.25,.3,.35,.4,.45]
+SimulationWidth_values = [200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000]
+output = numpy.zeros((len(nu_f_values),len(SimulationWidth_values)))
 
 for s in range(0,len(nu_f_values)):
-    for q in range(0,len(PointsPerCycle_values)):
+    for q in range(0,len(SimulationWidth_values)):
 
         # First check to make sur# Material Properties Constants
         Ef = 333000. # Young's modulus of elastic film in MPa
@@ -48,14 +47,13 @@ for s in range(0,len(nu_f_values)):
         
         # Simulation Constants
         h = float(1) # film thickness in microns
-#        PointsPerCycle = 10 #number of timepoints per cycle, higher number is slower, but should have more stable results
-        PointsPerCycle = PointsPerCycle_values[q]
+        PointsPerCycle = 10 #number of timepoints per cycle, higher number is slower, but should have more stable results
         NumberCycles = 1000 # arbitrarily chose number of cycles, can graph any of these later
         dT = 1/float(PointsPerCycle) #timestep in units of cycles
         H0 = 10 * h #initial thickness of metal in units of h
         xSteps = 201
-        SimulationWidth = 600 * h # will simulate a 200 um wide 
-#        SimulationWidth = SimulationWidth_values[q]*h
+#        SimulationWidth = 600 * h # will simulate a 200 um wide 
+        SimulationWidth = SimulationWidth_values[q]*h
         #deltax = SimulationWidth / (xSteps-1) #mesh size in x direction in mm
         deltax = (SimulationWidth / (xSteps-1))
         S = float64(0) * Ef # try for S=0, S=0.1, and S=10 for elastic constraint values
