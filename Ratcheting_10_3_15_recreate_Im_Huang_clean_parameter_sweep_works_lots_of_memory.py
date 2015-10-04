@@ -157,7 +157,9 @@ for s in range(0,len(nu_f_values)):
                     p7 = -taox[i,0]*((w[i+1,0]-w[i-1,0])/(2*deltax))-S*w[i,0] 
 
         output[s,q] = w[int((xSteps-1)/2),Points-1]    
+
  #still the worst
+ #this is on something else
 figure   
 plt.plot(w[:,0],'k')
 plt.plot(w[:,2],'b')
