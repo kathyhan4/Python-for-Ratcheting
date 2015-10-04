@@ -158,6 +158,7 @@ for s in range(0,len(nu_f_values)):
 
         output[s,q] = w[int((xSteps-1)/2),Points-1]    
  
+ #this is on something else
 figure   
 plt.plot(w[:,0],'k')
 plt.plot(w[:,2],'b')
